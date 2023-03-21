@@ -41,11 +41,12 @@ test-unit: keycloak-start
 	@echo "Running unit tests with kong version ${KONG_VERSION}"
 	@echo
 
-	@cd tests && $(MAKE) --no-print-directory _tests-unit PLUGIN_VERSION=${PLUGIN_VERSION} KONG_VERSION=${KONG_VERSION}
+	@KONG_VERSION=${KONG_VERSION} pongo run --no-postgres
 
 	@echo
 	@echo "Unit tests passed with kong version ${KONG_VERSION}"
 	@echo ======================================================================
+	@pongo down
 
 test-integration: restart-all sleep keycloak-start
 	@echo ======================================================================
