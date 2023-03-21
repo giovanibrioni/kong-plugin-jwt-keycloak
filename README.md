@@ -245,3 +245,11 @@ make kong-log # For proxy logs
 make kong-err-proxy # For proxy error logs
 make kong-err-admin # For admin error logs
 ```
+
+### If you prefer docker-compose
+
+```bash
+docker-compose up -d kong # For run kong
+docker-compose up -d konga # For proxy error logs
+docker-compose up -d --force-recreate --no-deps --build kong # For rebuid image after alter plugin code
+```

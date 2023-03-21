@@ -9,6 +9,8 @@ KONG_DB_PASS:=kong
 KONG_DB_NAME:=kong
 KONG_DATABASE?=postgres
 
+KONG_PG_HOST=host.docker.internal
+
 POSTGRES_IMAGE:=postgres:11.2-alpine
 CASSANDRA_IMAGE:=cassandra:3.11
 
@@ -22,7 +24,7 @@ kong-db-create-postgres:
 	@echo "Creating Kong DB"
 	- @docker run --rm -d \
 		--name ${KONG_DB_CONTAINER_NAME} \
-		--net=host \
+		-p ${KONG_DB_PORT}:${KONG_DB_PORT} \
 		 -e POSTGRES_USER=${KONG_DB_USER} \
 		 -e POSTGRES_DB=${KONG_DB_PASS} \
 		 -e POSTGRES_PASSWORD=${KONG_DB_NAME} \
@@ -41,10 +43,9 @@ kong-db-migrate: build
 	@echo "Migrating Kong DB"
 	@docker run -it --rm \
 		--name ${KONG_CONTAINER_NAME} \
-		--net=host \
 		-e "KONG_DATABASE=${KONG_DATABASE}" \
 		-e "KONG_CASSANDRA_CONTACT_POINTS=localhost" \
-		-e "KONG_PG_HOST=localhost" \
+		-e "KONG_PG_HOST=${KONG_PG_HOST}" \
 		-e "KONG_PG_USER=${KONG_DB_USER}" \
 		-e "KONG_PG_PASSWORD=${KONG_DB_PASS}" \
 		-e "KONG_PG_DATABASE=${KONG_DB_NAME}" \
@@ -60,15 +61,15 @@ kong-start: build
 	@echo "Creating kong..."
 	@docker run -d --rm \
 		--name ${KONG_CONTAINER_NAME} \
-		--net=host \
-        -e "KONG_LOG_LEVEL=debug" \
+		-p ${KONG_PORT}:8000 \
+		-p ${KONG_ADMIN_PORT}:8001 \
         -e "KONG_PROXY_ACCESS_LOG=/proxy_access.log" \
         -e "KONG_ADMIN_ACCESS_LOG=/admin_access.log" \
         -e "KONG_PROXY_ERROR_LOG=/proxy_error.log" \
         -e "KONG_ADMIN_ERROR_LOG=/admin_error.log" \
 		-e "KONG_DATABASE=${KONG_DATABASE}" \
 		-e "KONG_CASSANDRA_CONTACT_POINTS=localhost" \
-		-e "KONG_PG_HOST=localhost" \
+		-e "KONG_PG_HOST=${KONG_PG_HOST}" \
 		-e "KONG_PG_USER=${KONG_DB_USER}" \
 		-e "KONG_PG_PASSWORD=${KONG_DB_PASS}" \
 		-e "KONG_PG_DATABASE=${KONG_DB_NAME}" \
