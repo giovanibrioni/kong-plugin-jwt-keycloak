@@ -61,7 +61,7 @@ class TestBasics(unittest.TestCase):
     })
     @call_api(token=NOT_FOUND_JWT)
     def test_invalid_iss(self, status, body):
-        self.assertEqual(FORBIDDEN, status)
+        self.assertEqual(UNAUTHORIZED, status)
         self.assertEqual('Unable to get public key for issuer', body.get('message'))
 
     @create_api({
@@ -70,7 +70,7 @@ class TestBasics(unittest.TestCase):
     })
     @call_api(token=LONG_LASTING)
     def test_max_exp(self, status, body):
-        self.assertEqual(FORBIDDEN, status)
+        self.assertEqual(UNAUTHORIZED, status)
         self.assertEqual('Token claims invalid: ["exp"]="exceeds maximum allowed expiration"', body.get('message'))
 
     @create_api({
