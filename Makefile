@@ -1,6 +1,6 @@
 include makefiles/*.mk
 
-REPOSITORY?=gbbirkisson
+REPOSITORY?=giovanibrioni
 IMAGE?=kong-plugin-jwt-keycloak
 KONG_VERSION?=2.8.1
 FULL_IMAGE_NAME:=${REPOSITORY}/${IMAGE}:${KONG_VERSION}
