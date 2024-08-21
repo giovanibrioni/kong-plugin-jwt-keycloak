@@ -24,7 +24,7 @@ services:
       POSTGRES_USER:     kong
       POSTGRES_PASSWORD: kong
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "api-gw"]
+      test: ["CMD", "pg_isready", "api-gw", "-U", "kong"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,7 +33,7 @@ services:
   # Kong database migration
   #######################################
   kong-migration:
-    image: kong:2.8.1
+    image: kong:3.4
     command: "kong migrations bootstrap"
     networks:
       - kong-net
@@ -57,9 +57,8 @@ services:
     build:
       context: ./ 
       args:
-        KONG_VERSION: 2.8.1
-        PLUGIN_VERSION: 1.1.0-1  
-    image: kong-jwt-keycloak:latest
+        KONG_VERSION: 3.4
+        PLUGIN_VERSION: 1.3.0-1  
     depends_on:
       - kong-db
       - kong-migration
@@ -68,6 +67,7 @@ services:
     ports:
       - "8000:8000" # Listener
       - "8001:8001" # Admin API
+      - "8002:8002" # Manager
       - "8443:8443" # Listener  (SSL)
       - "8444:8444" # Admin API (SSL)
     environment:
